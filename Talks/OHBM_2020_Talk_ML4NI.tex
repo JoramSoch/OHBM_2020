@@ -1,0 +1,789 @@
+\documentclass[12pt,t]{beamer}
+
+\usepackage{cmbright}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+
+% fonts
+\ifxetex
+  \usepackage{fontspec,xltxtra,xunicode}
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+\else
+  \ifluatex
+    \usepackage{fontspec}
+    \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \else
+    \usepackage[utf8]{inputenc}
+  \fi
+\fi
+
+% graphics
+\graphicspath{{img/}}
+\usepackage{graphicx}
+% \usepackage{letltxmacro}
+% \LetLtxMacro{\oig}{\includegraphics}
+% \renewcommand{\includegraphics}[2][]{%
+%   {\centering\oig[#1]{#2}\par}%
+% }
+\usepackage{etoolbox}
+\AtBeginDocument{%
+  \letcs\oig{@orig\string\includegraphics}%
+  \renewcommand<>\includegraphics[2][]{%
+    \only#3{%
+      {\centering\oig[{#1}]{#2}\par}%
+    }%
+  }%
+}
+
+% headline for section
+\setbeamertemplate{footline}
+{%
+  \leavevmode%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex]{section in head/foot}%
+    \hbox to \paperwidth{\hspace{1em}\insertsectionhead\hfil\insertframenumber\,/\,\inserttotalframenumber\hspace{1em}}
+  \end{beamercolorbox}%
+}
+
+% remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+
+% color theme "boy scout" ;-) high-contrast version
+\definecolor{darkorange}{rgb}{0.8,0.4,0}
+\definecolor{verylightgray}{rgb}{0.9,0.9,0.9}
+\setbeamercolor{structure}{fg=darkorange,bg=darkgray}
+\setbeamercolor{normal text}{fg=black,bg=verylightgray}
+\setbeamercolor{section in head/foot}{fg=darkorange,bg=red}
+
+% automatic section page at beginning of each \section
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{title}
+    \usebeamerfont{title}\insertsectionhead\par\medskip%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+% (partially) unify structure and bold
+\setbeamerfont{description item}{series=\bfseries}
+\renewcommand{\textbf}[1]{\structure{\bfseries #1}}
+
+% formatting
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{9pt plus 2pt minus 1pt}
+\setlength{\itemsep}{9pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setbeamersize{text margin left=7.5mm,text margin right=7.5mm}
+
+% % show notes
+% \usepackage{pgfpages}
+% \setbeameroption{show notes on second screen}
+% % \setbeameroption{show only notes}
+% \setbeamerfont{note page}{size=\footnotesize}
+% \makeatletter 
+% \def\beamer@framenotesbegin{% at beginning of slide
+%      \usebeamercolor[fg]{normal text}
+%       \gdef\beamer@noteitems{}% 
+%       \gdef\beamer@notes{}% 
+% }
+% \makeatother
+
+% include extra definitions
+\newcommand{\mathup}[1]{\mathsf{#1}}
+\input{definitions.tex}
+
+% quote environment without emphasis
+\let\oq\quote
+\let\endoq\endquote
+\renewenvironment{quote}{\begin{oq}\sf}{\end{oq}}
+
+% for references
+\renewcommand{\texttt}[1]{\vspace*{-1em}\hfill{\scriptsize #1}}
+
+\usepackage{longtable,booktabs}
+
+% tightlist
+\providecommand{\tightlist}{%
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% page numbers
+\addtobeamertemplate{navigation symbols}{}{%
+	\usebeamerfont{footline}%
+	\usebeamercolor[fg]{footline}%
+	\hspace{1em}%
+	\insertframenumber/\inserttotalframenumber
+}
+\setbeamercolor{footline}{fg=black}
+% \setbeamerfont{footline}{series=\bfseries}
+
+\begin{document}
+
+% title page
+\begin{frame}[plain]
+\bigskip\bigskip
+\begin{beamercolorbox}[sep=8pt,center]{section title}
+\usebeamerfont{section title}A Primer on Permutation Tests\\
+(not only) for MVPA\par
+\vspace*{0.8ex}
+\end{beamercolorbox}
+\begin{center}
+Joram Soch\par
+\normalsize{(}
+\scriptsize{with slides by }
+\normalsize{Carsten Allefeld}
+\normalsize{)}\par
+\scriptsize
+Bernstein Center for Computational Neuroscience, Berlin, Germany\\
+German Center for Neurodegenerative Diseases, Göttingen, Germany \\
+E-Mail: joram.soch@bccn-berlin.de, Joram.Soch@DZNE.de\\
+\oig[height=1.6cm]{Logo_BCCN_kurz.pdf}
+\hspace{4.1cm}
+\oig[height=1.3cm]{Logo_Charite.pdf}
+\end{center}
+\end{frame}
+
+% % outline
+% \begin{frame}[plain]\frametitle{Outline}
+% \tableofcontents[hideallsubsections]
+% \end{frame}
+
+\begin{frame}{introduction}
+
+why use a permutation test? \vspace{-1em}
+
+\begin{itemize}
+\tightlist
+\item
+  sometimes precise distributions are \textbf{not known},\\
+  especially in MVPA\\
+\item
+  a permutation test makes \textbf{weaker assumptions}\\
+  about distributions than parametric tests\\
+\item
+  permutation tests provide \textbf{exact inference}\\
+\item
+  permutation testing applies \textbf{in the same way}\\
+  to univariate and multivariate analysis \bigskip
+\end{itemize}
+
+this talk \vspace{-1em}
+
+\begin{itemize}
+\tightlist
+\item
+  no recipes, but the \textbf{basic principles} underlying permutation
+  tests, especially exchangeability
+\end{itemize}
+
+\note{Why use a permutation test? A permutation test is a good choice if there are no well-founded parametric distributional assumptions for a given data set. That is often the case for instance in MVPA. Permutation tests need only weak distributional assumptions, and they are guaranteed to be exact if those weak assumptions are fulfilled. Moreover, it is useful to know that those principles apply to uni- and multivariate analysis in the same way.
+
+Today I'm not going to give you ready-to-use permutation recipes, but I will explain the basic underlying principles, so you can be critical in evaluating proposed schemes and develop them yourself.
+\par}
+
+\end{frame}
+
+\section{A simple example}\label{example}
+
+\begin{frame}{a univariate example: two-sample test}
+
+is there a mean difference between groups A and B? \phantom{|}
+
+\smallskip
+\includegraphics{fig_twosample_a}
+
+\note{The classic case of a null hypothesis test is to check whether the distributions from which two samples have been drawn have the same or different means. A standard application would be data measured in two different groups of subjects, A and B. The data enter a computation which produces a test statistic, and in this case the obvious choice is the difference of sample means. For the original data, its value is 2.
+\par}
+
+\end{frame}
+
+\begin{frame}{two-sample test}
+
+if not, values can be \textbf{exchanged} between conditions
+\phantom{|}
+
+\smallskip
+\includegraphics{fig_twosample_b}
+
+\note{The null hypothesis is that there is no mean difference, and no difference between the two distributions in general. Under this hypothesis, sample values can be exchanged between conditions, as indicated by the arrows.
+\par}
+
+\end{frame}
+
+\begin{frame}{two-sample test}
+
+the same test statistic is computed from \textbf{permuted data}
+\phantom{|}
+
+\smallskip
+\includegraphics{fig_twosample_c}
+
+\note{The exchange of values leads to permuted data. The same computation is applied to the permuted data, resulting in a different value of the test statistic, here -2.67.
+\par}
+
+\end{frame}
+
+\begin{frame}{two-sample test}
+
+compute the test statistic for \textbf{all permutations} \phantom{|}
+
+\smallskip
+\includegraphics{fig_twosample_perms_a}
+
+\note{A permutation test proceeds such that all possible permutations of the data are generated, and the test statistic computed, which gives the permutation distribution of the statistic. In this case with 3 values in 2 samples, there are 20 possible permutations.
+\par}
+
+\end{frame}
+
+\begin{frame}{two-sample test}
+
+determine \textbf{ranks} by sorting in descending order \phantom{|}
+
+\smallskip
+\includegraphics{fig_twosample_perms_b}
+
+\note{The permutation values of the test statistic are then assigned ranks, for instance by sorting them in descending order.
+\par}
+
+\end{frame}
+
+\begin{frame}{two-sample test}
+
+the \textbf{neutral permutation} is part of the set \phantom{|}
+
+\smallskip
+\includegraphics{fig_twosample_perms_c}
+
+\note{The original data represent one of the permutations, the so-called neutral permutation, which results in the original value of the test statistic. In this example, it gets assigned the rank 5.
+\par}
+
+\end{frame}
+
+\begin{frame}{two-sample test}
+
+the rank of the original value determines \textbf{significance}
+\phantom{|}
+
+\smallskip
+\includegraphics{fig_twosample_perms_d}
+
+\note{The effect is statistically significant if the original value is among the highest-ranked values in the permutation distribution. If we here conduct a test at a level of 5\%, the result is only significant if it has the rank 1. Since the original value has the rank 5, there is no significant effect.
+\par}
+
+\end{frame}
+
+\begin{frame}{two-sample test}
+
+equivalently, a \textbf{\emph{p}-value} can be computed \phantom{|}
+
+\smallskip
+\includegraphics{fig_twosample_perms_e}
+
+\note{Equivalently, a $p$-value can be computed as the ratio between the rank of the original test statistic and the number of permutations, here 5 over 20 or 0.25.
+
+The procedure so far was for a one-sided test, determining if there is a higher mean in B than in A.
+\par}
+
+\end{frame}
+
+\begin{frame}{two-sample test}
+
+test for \textbf{decrease}: use the negative test statistic \phantom{|}
+
+\smallskip
+\includegraphics{fig_twosample_perms_f}
+
+\note{The one-sided test in the other direction is implemented by simply using the negative of the test statistic, which leads to the rank 16 and the $p$-value 0.8.
+\par}
+
+\end{frame}
+
+\begin{frame}{two-sample test}
+
+\textbf{two-sided test}: use the absolute value of the test statistic
+\phantom{|}
+
+\smallskip
+\includegraphics{fig_twosample_perms_g}
+
+\note{Accordingly, a two-sided test is performed by using the absolute value of the test statistic.
+
+Because the permutations are symmetric, we now obtain each value in the permutation distribution twice, which means that there are ties in the ranking. In particular, the original value of the test statistic, 2, is tied with the value for another permutation, the one where all values have been exchanged between samples. In this case one has to assign the largest possible rank to the original value in order to have a valid test, here the rank 10, leading to a $p$-value of 0.5.
+\par}
+
+\end{frame}
+
+\begin{frame}{formal procedure for a permutation test}
+
+\vspace{-0.5em}
+
+given: data, test statistic, sig. level \(\alpha\), \textbf{possible
+exchanges} \vspace{-0.5em}
+
+\begin{itemize}
+\item
+  compute test statistic \(T_1\) for original data
+\item
+  compute test statistic \(T_i\) for all permutations
+  \(i = 2 \ldots n_\mathup{P}\)\\
+  (or a random selection \(\longrightarrow\) `Monte-Carlo')\\
+  \(i = 1\) is the `neutral permutation'
+\item
+  determine the rank of \(T_1\):
+  \(\quad \displaystyle r = \sum_{i = 1}^{n_\mathup{P}} [T_i \geq T_1]\)\\
+  where \([\text{true}] = 1\) and \([\text{false}] = 0\)
+\item
+  determine the \(p\)-value:
+  \(\quad \displaystyle p = \frac{r}{n_\mathup{P}}\)
+\item
+  if \(p \leq \alpha\), reject \(\Hnull\)
+\end{itemize}
+
+\vspace{-0.5em}
+
+the test is exact if \(\alpha\) is a multiple of
+\(\frac{1}{n_\mathup{P}}\) and there are no ties, otherwise it is
+conservative
+
+\note{This is the formal procedure for a permutation test in general.
+
+Given are the data, the test statistic, the significance level $\alpha$, and the set of exchanges which generate permutations. The test statistic $T$ is computed for all permutations, $i = 1 \ldots n_\mathup{P}$, where $n_\mathup{P}$ is the number of permutations. If that number is too large, alternatively a subset may be selected randomly. In any case it has to be made sure that the neutral permutation, $i = 1$, is included in the set. The rank $r$ of $T_1$ can then be determined as the number of permutation values that are larger than or equal to the original value. The $p$-value is the ratio between $r$ and $n_\mathup{P}$. Finally, the null hypothesis is rejected if the $p$-value is smaller than or equal to $\alpha$.
+
+The test is exact if $\alpha$ is a multiple of $\frac{1}{n_\mathup{P}}$ and there are no ties, otherwise it is conservative.
+\par}
+
+\end{frame}
+
+\section{Exchangeability}\label{exchangeability}
+
+\begin{frame}{exchangeability}
+
+\textbf{independent} samples from the \textbf{same distribution}
+(i.i.d.) \ldots{} % \phantom{|}
+
+\smallskip
+\includegraphics{fig_exchangeability_a}
+
+\note{As we have seen, the essential concept underlying permutation tests is that of exchangeability. Which sample values are exchangeable depends on the specific null hypothesis that is being tested. The simplest case is that of independent and identically distributed values. As an illustration, the plot shows the joint probability distribution of two values in such a case, $x_1$ and $x_2$.
+\par}
+
+\end{frame}
+
+\begin{frame}{exchangeability}
+
+\ldots{} can be \textbf{exchanged}: \(\quad x_1 \leftrightarrow x_2\)
+\phantom{|}
+
+\smallskip
+\includegraphics{fig_exchangeability_b}
+
+\note{If the two values are exchanged, this means that the joint distribution gets flipped across the diagonal. As we see, this operation leaves the joint distribution unchanged, which means that the two values are exchangeable.
+\par}
+
+\end{frame}
+
+\begin{frame}{exchangeability}
+
+\textbf{independent} samples from \textbf{different distributions}
+\ldots{} \phantom{|}
+
+\smallskip
+\includegraphics{fig_exchangeability_c}
+
+\note{Now if the values are still independent, but from different distributions, for example with different means...
+\par}
+
+\end{frame}
+
+\begin{frame}{exchangeability}
+
+\ldots{} \textbf{cannot} be \textbf{exchanged} \phantom{|}
+
+\smallskip
+\includegraphics{fig_exchangeability_d}
+
+\note{...the same operation changes the joint distribution, which means the values are no longer exchangeable.
+\par}
+
+\end{frame}
+
+\begin{frame}{exchangeability}
+
+exchangeability refers to the \textbf{null hypothesis}! \phantom{|}
+
+\smallskip
+\includegraphics{fig_exchangeability_e}
+
+\note{If we were to test for a difference of means, this is exactly what we want: The joint distribution is unchanged for equal means, the null hypothesis – but not for different means, the negation of the null hypothesis. It is for this reason that we can use the permutation distribution to detect a deviation from the null hypothesis.
+
+The exchanges for a permutation test have to be chosen such that they are possible under the null hypothesis, but not possible if the null hypothesis is false.
+\par}
+
+\end{frame}
+
+\begin{frame}{exchangeability}
+
+exchangeable also if there is dependency but \textbf{symmetric}
+\phantom{|}
+
+\smallskip
+\includegraphics{fig_exchangeability_f}
+
+\note{Exchangeability also holds for values which come from the same distribution but are statistically dependent, as long as the joint distribution is symmetric. This is a situation that is often hard to deal with by parametric tests, but poses no problem for a permutation test.
+\par}
+
+\end{frame}
+
+\begin{frame}{exchangeability}
+
+\textbf{caution:} null hypothesis may be wrong \textbf{in unexpected
+ways}
+
+\smallskip
+\includegraphics{fig_exchangeability_g}
+
+\end{frame}
+
+\section{Some test examples}\label{examples}
+
+\begin{frame}{tests: univariate two-sample}
+
+independent values sampled from two univariate distributions
+
+\(\Hnull\): two samples come from the \textbf{same distribution}\\
+\(\longrightarrow\) i.i.d. case: values can be exchanged freely
+
+\smallskip
+\includegraphics{fig_twosample_exchanges_a}
+
+test statistic is sensitive to difference in means:\\
+permutation analogue of the \textbf{two-sample \emph{t}-test}
+
+\note{Let's return to the case of samples from two univariate distributions. If the values were independently sampled, then under the null hypothesis that the two distributions are identical, values can be freely exchanged between samples, as indicated by the arrows.
+
+Combined with a test statistic that is sensitive to a difference in means, this gives the permutation analogue of the two-sample $t$-test.
+\par}
+
+\end{frame}
+
+\begin{frame}{tests: multivariate two-sample}
+
+independent vectors from two multivariate distributions
+
+\(\Hnull\): two samples from the \textbf{same multivariate
+distribution}\\
+\(\longrightarrow\) i.i.d. case: \textbf{vector values} can be exchanged
+freely
+
+\smallskip
+\includegraphics{fig_twosample_exchanges_b}
+
+\textbf{Problem with accuracies:} few possible values
+\(\longrightarrow\) ties!
+
+\textbf{Example:} classification of subject-specific patterns,\\
+e.g.~of patients based on structural MRI
+
+\note{As mentioned before, the exact same principle applies if the values are not univariate but multivariate. Now the null hypothesis is that the two samples come from the same \emph{multivariate} distribution, and consequently \emph{vectors} of values can be exchanged freely. As a test statistic, in MVPA we can for example train and test a classifier, and then use the cross-validated accuracy.
+\vspace{-0.5em}
+
+There is however a specific problem associated with accuracies as a test statistic, namely that only a few values are possible, which can lead to ties in the permutation distribution. One way around this is to use another multivariate measure like for example Mahalanobis distance, or in the case of searchlight-based images, to smooth them.
+\vspace{-0.5em}
+
+An example where the assumption of independence likely holds is if the different values were obtained from different subjects, for example trying to classify patients based on structural MRI scans.
+\par}
+
+\end{frame}
+
+\begin{frame}{tests: univariate paired}
+
+\textbf{paired} values sampled from two univariate distributions
+
+\(\Hnull\): two samples come from the same distribution\\
+\(\longrightarrow\) partial dependency: values can be exchanged
+\textbf{within pairs}
+
+\smallskip
+\includegraphics{fig_twosample_exchanges_c}
+
+test statistic is sensitive to difference in means:\\
+permutation analogue of the \textbf{paired \emph{t}-test}
+
+\note{Another standard scenario is that values are \emph{pairwise dependent}. In this case, exchangeability holds only within pairs. Here the black lines denote statistical dependency between values, and the arrows denote pairwise exchanges.
+
+Combined with a test statistic that is sensitive to a difference in means, this gives the permutation analogue of the paired $t$-test.
+\par}
+
+\end{frame}
+
+\begin{frame}{tests: multivariate paired}
+
+paired vectors sampled from two multivariate distributions
+
+\(\Hnull\): two samples from the same multivariate distribution\\
+\(\longrightarrow\) partial dependency: vectors can be exchanged within
+pairs
+
+\smallskip
+\includegraphics{fig_twosample_exchanges_d}
+
+\textbf{Example:}\\
+-- classification of condition-specific patterns across subjects\\
+-- classification of patterns across runs, within subject
+
+\note{Again, the same principle applies in the multivariate case: vector values can be exchanged within pairs.
+
+An example of this is the classification of condition-specific patterns across subjects, because subjects can be considered independent sources of data, but the patterns for different conditions are obtained from the same subject and therefore possibly dependent. Another example is the classification of patterns across runs within subject, because runs can be considered independent sources of data.
+\par}
+
+\end{frame}
+
+\begin{frame}{alternative to accuracy: multivariate test}
+
+multivariate samples can also be compared using \\
+significance tests \(\longrightarrow\) potentially \textbf{more powerful} \phantom{|}
+
+\smallskip
+\includegraphics[width=1.0\linewidth]{Paper_Rosenblatt}
+
+\note{alternative to accuracy: multivariate test \par}
+
+\end{frame}
+
+\section{Limited exchangeability}\label{limited-exchangeability}
+
+\begin{frame}{time series}
+
+fMRI trials occur in a time series with \textbf{serial dependency}
+\phantom{|}
+
+\smallskip
+\includegraphics{fig_timeseries_a}
+
+\note{A special problem for permutation testing exists for classification of trial-wise patterns within subject in fMRI. Trials occur in sequence, and fMRI has serial dependencies.
+\par}
+
+\end{frame}
+
+\begin{frame}{time series}
+
+\textbf{problem:} exchanges change the \textbf{dependency structure}
+\phantom{|}
+
+\smallskip
+\includegraphics{fig_timeseries_b}
+
+\note{Because of this, an exchange of values between trials of different conditions changes the dependency structure of the data, even under the null hypothesis.
+\par}
+
+\end{frame}
+
+\begin{frame}{time series}
+
+\textbf{no exchangeability} of values in fMRI time series! \phantom{|}
+
+\smallskip
+\includegraphics{fig_timeseries_c}
+
+\note{This means there is no exchangeability within fMRI time series.
+\par}
+
+\end{frame}
+
+\begin{frame}{time series}
+
+for a \textbf{randomized} trial sequence, \textbf{labels} can be
+exchanged \phantom{|}
+
+\smallskip
+\includegraphics{fig_timeseries_d}
+
+\vspace{-2em}
+
+\(\longrightarrow\) \textbf{randomization test}, \(\quad\neq\)
+permutation test\\
+relies on the distribution of the labels, not the data\\
+disadvantage: not exact for given randomized design
+
+\note{If the sequence of trial conditions has been originally randomized, it is however possible to exchange labels between trials. This leads to a close relative of the permutation test, the so-called randomization test. The disadvantage of the randomization test is that it provides weaker control of the type 1 error; the test is only exact on average across randomized trial sequences.
+\par}
+
+\end{frame}
+
+\begin{frame}{time series}
+
+run-wise \textbf{means} or GLM estimates are often exchangeable
+\phantom{|}
+
+\smallskip
+\includegraphics{fig_timeseries_e}
+
+\vspace{-0.5em}
+
+\(\longrightarrow\) run-wise classification may be a better alternative
+
+\note{Another workaround is to apply exchanges not on the level of single trials, but of run-wise condition-specific means or GLM parameter estimates. Run-wise means still exhibit dependence, but they can be exchanged within pairs. This means that statistically, run-wise classification may be a better alternative.
+\par}
+
+\end{frame}
+
+% \begin{frame}{time series}
+% 
+% serial dependency can be removed by \textbf{whitening}\\
+% \textbf{second problem:} no exchangeability of \textbf{covariates}!
+% 
+% \smallskip
+% \includegraphics{fig_covariates}
+% 
+% \end{frame}
+
+\begin{frame}{alternative to classification: cvMANOVA}
+
+cross-validated multivariate ANOVA allows for arbitrary \\
+time series designs \(\longrightarrow\) \textbf{more flexible} than decoding \phantom{|}
+
+\smallskip
+\includegraphics[width=1.0\linewidth]{Paper_Allefeld}
+
+\note{alternative to classification: cvMANOVA \par}
+
+\end{frame}
+
+\section{Further topics}\label{further-topics}
+
+\begin{frame}{multiple comparisons}
+
+several tests in parallel (voxels): control for \textbf{family-wise
+error}
+
+precise correction depends on dependency between tests,\\
+accounted for by using the \textbf{same permutation} across tests
+
+test statistic \(T_{ij}\), permutations \(i = 1 \ldots n_\mathup{P}\),
+tests \(j = 1 \ldots n_\mathup{T}\)
+
+\begin{itemize}
+\item
+  test whether there is an effect somewhere (omnibus \(\Hnull\)):\\
+  use the \textbf{maximum statistic} \[
+  M_i = \max_{j = 1}^{n_\mathup{T}} T_{ij},
+  \qquad
+  p_\text{omnibus} = \frac{1}{n_\mathup{P}} \sum_{i = 1}^{n_\mathup{P}} [M_i \geq M_1]
+  \]
+\item
+  test whether there is an effect at \(j\), corrected \[
+  p_j = \frac{1}{n_\mathup{P}} \sum_{i = 1}^{n_\mathup{P}} [M_i \geq T_{1j}]
+  \]
+\end{itemize}
+
+\note{Another problem in neuroimaging is that we often deal with brain images where we effectively perform many tests in parallel, one at each voxel. This calls for control of the family-wise error rate, but precise correction depends on the structure of dependencies between tests. Fortunately, this can be easily dealt with in permutation testing by using the same permutation across tests.
+\vspace{-0.5em}
+
+The test statistic $T$ is now indexed by the permutation $i$ and the test $j$. In order to test whether there is an effect somewhere, one uses the maximum statistic $M_i$, which is the maximum of $T_{ij}$ across tests $j$ for each permutation $i$ separately. The omnibus $p$-value is then determined by the fraction of maximal values that are larger than or equal to $M_1$. Additionally, for each test $j$ a corrected $p$-value is determined by the fraction of maximal values that are larger than or equal to $T_{1j}$, the original value of the test statistic at $j$.
+\par}
+
+\end{frame}
+
+\begin{frame}{beyond permutations}
+
+the principle underlying permutation tests:
+
+\begin{itemize}
+\item
+  find a group of \textbf{transformations} under which\\
+  the \(\Hnull\)-distribution is \textbf{invariant}\\
+  (includes the neutral transformation)
+\item
+  compute the test statistic from data\\
+  after \textbf{each transformation} has been applied
+\item
+  \ldots
+\end{itemize}
+
+permutation is a special case of transformation,\\
+exchangeability is a special case of invariance
+
+\textbf{``group''}: the combination of two transformations\\
+is another transformation (is also in the group)
+
+\end{frame}
+
+\begin{frame}{beyond permutations: mirror symmetry}
+
+`sign-flip test': \(\quad x \leftrightarrow -x\)
+
+\smallskip
+\includegraphics{fig_exchangeability2}
+
+\note{If a value comes from a symmetric distribution, it can be 'exchanged' with its negative. This can be used to test whether the mean of the distribution is zero. However, this is not a permutation test in the strict sense.
+\par}
+
+\end{frame}
+
+\begin{frame}{beyond permutations: sphericity}
+
+`rotation test': \small\url{https://f1000research.com/posters/6-1085}
+
+\smallskip
+\includegraphics{fig_rotation}
+
+\note{hi
+\par}
+
+\end{frame}
+
+\begin{frame}{further reading}
+
+\fontsize{7pt}{8pt}\selectfont
+
+\textbf{permutation tests, general}\\
+\hspace*{0.333em}-- Ernst, Permutation methods: A basis for exact
+inference, \emph{Statistical Science} 2004\\
+\hspace*{0.333em}-- Good, \emph{Permutation, Parametric, and Bootstrap
+Tests of Hypotheses}, Springer 2005\\
+\hspace*{0.333em}-- Lehmann \& Romano, \emph{Testing Statistical
+Hypotheses}, Springer 2005, \textbf{Sec. 5.8}
+
+\textbf{neuroimaging}\\
+\hspace*{0.333em}-- Nichols \& Holmes, Nonparametric permutation tests
+for functional neuroimaging: A primer with examples, \emph{Human Brain
+Mapping} 2001\\
+\hspace*{0.333em}-- Winkler et al., Permutation inference for the
+general linear model, \emph{NeuroImage} 2014\\
+\hspace*{0.333em}-- Winkler et al., Non-parametric combination and
+related permutation tests for neuroimaging, \emph{Human Brain Mapping}
+2016
+
+\textbf{MVPA}~~~~(caution!)\\
+\hspace*{0.333em}-- Golland \& Fischl, Permutation tests for
+classification: Towards statistical significance in image-based studies,
+\emph{Information processing in medical imaging} 2003\\
+\hspace*{0.333em}-- Etzel \& Braver, MVPA permutation schemes:
+Permutation testing in the land of cross-validation, \emph{PRNI} 2013\\
+\hspace*{0.333em}-- Schreiber \& Krekelberg, The statistical analysis of
+multi-voxel patterns in functional imaging, \emph{PLOS ONE} 2013\\
+\hspace*{0.333em}-- Stelzer et al., Statistical inference and multiple
+testing correction in classification-based multi-voxel pattern analysis
+(MVPA), \emph{NeuroImage} 2013\\
+\hspace*{0.333em}-- Allefeld et al., Valid population inference for
+information-based imaging: From the second-level \emph{t}-test to
+prevalence inference, \emph{NeuroImage} 2016
+
+\textbf{randomization tests}\\
+\hspace*{0.333em}-- Lehmann \& Romano, \emph{Testing Statistical
+Hypotheses}, Springer 2005, \textbf{Sec. 5.10}\\
+\hspace*{0.333em}-- Edgington \& Onghena, \emph{Randomization Tests},
+Chapman \& Hall 2007
+
+\note{In closing, I'd like to give you a list of useful literature about permutation testing, from the general principles to applications in univariate neuroimaging and MVPA. However, I'm afraid that not all of these authors are completely clear on which null hypothesis they are testing and which grounds they have for exchangeability. I therefore hope that my introduction into the principles of permutation tests helps you to critically use this literature.
+
+Thank you for your attention!
+\par}
+
+\end{frame}
+
+\end{document}
