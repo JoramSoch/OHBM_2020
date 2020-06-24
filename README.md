@@ -22,20 +22,17 @@ All times are in [Central European Summer Time](https://www.timeanddate.com/worl
 
 * Wed, 24/06/2020, 18:00-19:00: [Poster A](https://github.com/JoramSoch/OHBM_2020/blob/master/Posters/OHBM_2020_Poster_A_NBD.pdf)
 * Wed, 24/06/2020, 19:00-20:00: [Poster B](https://github.com/JoramSoch/OHBM_2020/blob/master/Posters/OHBM_2020_Poster_B_BFA.pdf) & [Poster C](https://github.com/JoramSoch/OHBM_2020/blob/master/Posters/OHBM_2020_Poster_C_RDM.pdf)
-
 * Sat, 27/06/2020, 02:00-03:00: Poster A
-* Sat, 27/06/2020, 03:00-04:00: Poster B & C
-
+* Sat, 27/06/2020, 03:00-04:00: Poster B & Poster C
 * Wed, 01/07/2020, 02:00-03:00: Poster A
-* Wed, 01/07/2020, 03:00-04:00: Poster B & C
-
+* Wed, 01/07/2020, 03:00-04:00: Poster B & Poster C
 * Fri, 03/07/2020, 08:00-09:00: Poster A
-* Fri, 03/07/2020, 09:00-10:00: Poster B & C
+* Fri, 03/07/2020, 09:00-10:00: Poster B & Poster C
 
 
 ## Educational course
 
 I'm also giving a talk in the [Educational Course](https://www.humanbrainmapping.org/i4a/pages/index.cfm?pageID=3977) _[Machine Learning for Neuroimaging](https://www.humanbrainmapping.org/files/2020/FEC_Machine_Learning_for_NeuroImaging_learn_the_basics_before_going_deeperUP.pdf)_ (ML4NI):
 
-* Mon, 13/07/2020 ff.: [A Primer on Permutation Tests (not only) for MVPA](https://github.com/JoramSoch/OHBM_2020/blob/master/Talks/OHBM_2020_Talk_ML4NI.pdf)
+* Mon, 13/07/2020 ff.: [A Primer on Permutation Tests (not only) for MVPA](https://github.com/JoramSoch/OHBM_2020/blob/master/Talks/OHBM_2020_Talk_ML4NI.pdf) (slides by [Carsten Allefeld](https://twitter.com/C_Allefeld))
 * Wed, 15/07/2020 - Fri, 17/07/2020: Interactive Engagement Lounge (details TBA)
